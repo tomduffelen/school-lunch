@@ -122,9 +122,6 @@
   .notice h2{margin:0 0 6px;font-size:1.05rem;font-weight:900}
   .notice p{margin:0;font-size:.92rem;color:var(--ink-soft);font-weight:600;line-height:1.45}
 
-  #check{margin:0 0 18px;color:#A9CDBA;font-size:.78rem;font-weight:600}
-  #check summary{cursor:pointer;padding:8px 2px;color:#8FBBA6}
-  #checkOut{background:rgba(0,0,0,.22);border-radius:6px;padding:12px 14px;line-height:1.6;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.72rem;color:#DCEFE4;word-break:break-word}
   footer{color:#A9CDBA;font-size:.74rem;font-weight:600;text-align:center;line-height:1.55;padding:2px 4px 12px}
 
   /* ---- bar ---- */
@@ -191,10 +188,6 @@
     Allergen list lives in the school kitchen, or email catering@swnorse.co.uk. Everything is subject to the kitchen's better judgement on the day.
   </footer>
 
-  <details id="check">
-    <summary>Why won't it install?</summary>
-    <div id="checkOut">Checking&hellip;</div>
-  </details>
 </div>
 
 <div class="bar">
@@ -326,6 +319,7 @@
   function nextSchoolDay(d){ var x = d; while (isWeekend(x)) x = addDays(x,1); return x; }
   function shortDate(d){ return d.getDate() + " " + MONTHS[d.getMonth()].slice(0,3); }
 
+  var MENU_ENDS = new Date(2026, 9, 23); // Friday 23 October, the last day of this menu
   var today = startOfDay(new Date());
   var current = nextSchoolDay(today);
 
@@ -355,7 +349,7 @@
     return '<div class="tray">' +
       well("The main event", "hot option 1", m.hot1.name + tagHtml(m.hot1.tag)) +
       well("The other one", "hot option 2", m.hot2.name + tagHtml(m.hot2.tag)) +
-      well("The bit that comes home uneaten", "served with", m.side) +
+      well("The bit that goes in the bin", "served with", m.side) +
       well("The actual reason they go", "pudding", m.pud) +
     '</div>';
   }
@@ -386,7 +380,8 @@
     datetext.textContent = current.getDate() + " " + MONTHS[current.getMonth()] + " " + current.getFullYear();
     stamp.textContent = relativeLabel(current);
     weekpill.textContent = wk ? WEEK_WORDS[wk] + " of three"
-                              : (CLOSED[key(mondayOf(current))] || "No dinners this week");
+                              : (CLOSED[key(mondayOf(current))]
+                                 || (current > MENU_ENDS ? "Menu's run out" : "No dinners this week"));
 
     var html, closure = CLOSED[key(mondayOf(current))];
 
@@ -398,9 +393,13 @@
     } else if (closure){
       html = noticeHtml(closure,
         "Hatch shut all week. Feeding them is your problem until Monday.");
+    } else if (current > MENU_ENDS){
+      html = noticeHtml("Waiting on the winter menu",
+        "Spring/summer finished on 23 October. The new one is still crumpled in the bottom of a book bag somewhere. " +
+        "Brace for gravy, brace for sprouts. The fussy sods will be fine, because this lot never changes:") + ALWAYS_HTML;
     } else {
       html = noticeHtml("Hatch closed",
-        "School holiday, or past the end of the spring/summer menu on 23 October. A new one turns up in the bottom of a book bag eventually.");
+        "School holiday, or before this menu started on 20 April.");
     }
     content.innerHTML = html;
     content.classList.remove("swap");
@@ -461,36 +460,6 @@
   });
 
   render();
-
-  document.getElementById("check").addEventListener("toggle", function(){
-    if (!this.open) return;
-    var out = document.getElementById("checkOut"), lines = [];
-    function draw(){ out.innerHTML = lines.join("<br>"); }
-    function add(label, ok, note){
-      lines.push((ok ? "PASS " : "FAIL ") + label + (note ? " &mdash; " + note : "")); draw();
-    }
-    lines = ["Page: " + location.href]; draw();
-    add("secure connection", window.isSecureContext);
-
-    fetch("manifest.json", {cache:"no-store"}).then(function(r){
-      add("manifest found", r.ok, "HTTP " + r.status + ", type " + (r.headers.get("content-type") || "none"));
-      return r.json();
-    }).then(function(mf){
-      add("manifest parses", true, "name: " + mf.name);
-      return Promise.all(mf.icons.map(function(ic){
-        return fetch(ic.src, {cache:"no-store"}).then(function(r){
-          add("icon " + ic.src, r.ok, "HTTP " + r.status);
-        }).catch(function(){ add("icon " + ic.src, false, "could not be fetched"); });
-      }));
-    }).catch(function(e){
-      add("manifest usable", false, String(e));
-    }).then(function(){
-      if (!("serviceWorker" in navigator)) return add("service worker support", false);
-      return navigator.serviceWorker.getRegistration().then(function(reg){
-        add("service worker registered", !!reg, reg && reg.active ? "active" : "not active yet, reload once");
-      });
-    });
-  });
 
   if ("serviceWorker" in navigator){
     window.addEventListener("load", function(){
