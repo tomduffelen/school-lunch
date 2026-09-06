@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>School Dinners</title>
+<meta name="description" content="What's being served in the hall today.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1F5D45">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dinners">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<style>
+  :root{
+    --hall:#1F5D45;
+    --hall-dark:#14402F;
+    --tray:#E7E0CD;
+    --tray-shade:#D6CDB4;
+    --steel:#AEB8BA;
+    --steel-dark:#8B9698;
+    --custard:#F7C948;
+    --ketchup:#D63B2A;
+    --ink:#1E1F1A;
+    --ink-soft:#5F6157;
+    --paper:#FFFCF2;
+    --font: "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--font);color:var(--ink);
+    background:var(--hall);
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255,255,255,.035) 0 2px, transparent 2px 9px),
+      repeating-linear-gradient(-45deg, rgba(0,0,0,.05) 0 1px, transparent 1px 7px);
+    background-attachment:fixed;
+    min-height:100svh;
+    padding:0 14px calc(96px + env(safe-area-inset-bottom));
+    -webkit-text-size-adjust:100%;
+    overflow-x:hidden;
+  }
+  .wrap{max-width:540px;margin:0 auto}
+
+  /* ---- sign over the hatch ---- */
+  .sign{
+    text-align:center;padding:calc(16px + env(safe-area-inset-top)) 0 16px;
+  }
+  .plaque{
+    display:inline-block;background:var(--ketchup);color:#fff;
+    font-weight:800;font-size:1.02rem;letter-spacing:.16em;
+    padding:9px 20px 8px;border-radius:3px;
+    border-bottom:4px solid #A32A1C;
+  }
+  .sign p{margin:8px 0 0;color:#BFE0CF;font-size:.76rem;font-weight:600;letter-spacing:.02em}
+
+  /* ---- the day, on the dinner ladies' whiteboard ---- */
+  .board{
+    background:var(--paper);border-radius:4px;padding:18px 18px 16px;position:relative;
+    box-shadow:0 10px 0 rgba(0,0,0,.22);
+    border-top:10px solid var(--steel);
+  }
+  .board::after{
+    content:"";position:absolute;left:50%;top:-16px;width:44px;height:12px;margin-left:-22px;
+    background:var(--steel-dark);border-radius:3px 3px 0 0;
+  }
+  .dayname{
+    font-size:clamp(2.5rem,14vw,3.4rem);font-weight:900;line-height:.92;
+    letter-spacing:-.035em;margin:0;text-transform:none;
+  }
+  .datetext{margin:6px 0 0;font-weight:700;color:var(--ink-soft);font-size:.95rem}
+  .stamp{
+    display:inline-block;transform:rotate(-2.5deg);transform-origin:left center;margin-bottom:11px;
+    color:var(--ketchup);border:3px solid var(--ketchup);border-radius:4px;
+    font-weight:900;font-size:.78rem;letter-spacing:.1em;padding:5px 9px;
+  }
+  .navrow{display:flex;align-items:center;gap:10px;margin-top:16px}
+  .arrow{
+    width:46px;height:42px;flex:none;border:0;border-radius:5px;cursor:pointer;
+    background:var(--steel);color:#2B3335;font-size:1.4rem;font-weight:900;line-height:1;
+    border-bottom:4px solid var(--steel-dark);
+  }
+  .arrow:active{transform:translateY(2px);border-bottom-width:2px}
+  .weekpill{
+    flex:1;text-align:center;background:var(--hall);color:#DCEFE4;
+    font-weight:700;font-size:.78rem;padding:11px 6px;border-radius:5px;
+    border-bottom:4px solid var(--hall-dark);
+  }
+
+  /* ---- the tray ---- */
+  .tray{
+    background:var(--steel);border-radius:14px;padding:8px;margin:16px 0 18px;
+    box-shadow:0 10px 0 rgba(0,0,0,.22);
+  }
+  .well{
+    background:var(--tray);border-radius:9px;padding:12px 14px;
+    box-shadow:inset 0 3px 0 rgba(0,0,0,.07);
+  }
+  .well + .well{margin-top:7px}
+  .well .cap{
+    display:block;font-weight:800;font-size:.72rem;color:var(--ketchup);
+    margin-bottom:4px;letter-spacing:.01em;
+  }
+  .well .cap small{color:var(--ink-soft);font-weight:600;letter-spacing:0}
+  .dish{margin:0;font-size:1.06rem;font-weight:700;line-height:1.3}
+  .tag{
+    display:inline-block;margin-left:7px;vertical-align:2px;font-size:.62rem;font-weight:800;
+    background:#3E7F58;color:#fff;padding:3px 7px;border-radius:3px;letter-spacing:.04em;
+  }
+  .tag.ve{background:#1F5D45}
+
+  .always{
+    background:rgba(0,0,0,.16);border:2px dashed rgba(255,255,255,.35);
+    border-radius:8px;padding:14px 16px;margin:0 0 16px;
+  }
+  .always h2{margin:0 0 8px;font-size:.85rem;color:var(--custard);font-weight:800}
+  .always ul{margin:0;padding-left:18px;color:#DCEFE4;font-weight:600;font-size:.9rem;line-height:1.55}
+
+  .notice{background:var(--paper);border-radius:4px;padding:16px;margin:16px 0 18px;box-shadow:0 8px 0 rgba(0,0,0,.22)}
+  .notice h2{margin:0 0 6px;font-size:1.05rem;font-weight:900}
+  .notice p{margin:0;font-size:.92rem;color:var(--ink-soft);font-weight:600;line-height:1.45}
+
+  footer{color:#A9CDBA;font-size:.74rem;font-weight:600;text-align:center;line-height:1.55;padding:2px 4px 12px}
+
+  /* ---- bar ---- */
+  .bar{
+    position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;gap:10px;justify-content:center;
+    padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+    background:linear-gradient(to top, var(--hall) 62%, rgba(31,93,69,0));
+  }
+  .bar button{
+    font-family:inherit;font-weight:800;font-size:.88rem;border:0;cursor:pointer;flex:1;max-width:190px;
+    padding:13px 14px;border-radius:5px;background:var(--custard);color:#4A3403;
+    border-bottom:4px solid #C99C1F;
+  }
+  .bar button.accent{background:var(--ketchup);color:#fff;border-bottom-color:#A32A1C}
+  .bar button:active{transform:translateY(2px);border-bottom-width:2px}
+
+  /* ---- week sheet ---- */
+  dialog{border:0;padding:0;background:transparent;width:100%;max-width:100%;max-height:100%;margin:0 auto auto}
+  dialog::backdrop{background:rgba(8,30,22,.7)}
+  .sheet{background:var(--hall);min-height:100svh;padding:calc(16px + env(safe-area-inset-top)) 14px calc(28px + env(safe-area-inset-bottom))}
+  .sheetHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;max-width:540px;margin-inline:auto}
+  .sheetHead h2{margin:0;color:#fff;font-size:1.1rem;font-weight:900;letter-spacing:-.01em}
+  .close{border:0;background:var(--custard);color:#4A3403;font-family:inherit;font-weight:800;padding:11px 16px;border-radius:5px;cursor:pointer;border-bottom:4px solid #C99C1F}
+  .daycard{background:var(--paper);border-radius:5px;overflow:hidden;margin-bottom:12px;max-width:540px;margin-inline:auto;box-shadow:0 7px 0 rgba(0,0,0,.22)}
+  .daycard header{background:var(--steel);color:#252D2F;font-weight:900;padding:9px 14px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .daycard header span{font-size:.74rem;font-weight:700;opacity:.75}
+  .daycard.is-today header{background:var(--ketchup);color:#fff}
+  .daycard.is-today header span{opacity:.9}
+  .daycard .line{display:flex;gap:10px;padding:10px 14px}
+  .daycard .line + .line{border-top:1px solid #EBE4D2}
+  .daycard .k{flex:none;width:78px;font-size:.7rem;font-weight:800;color:var(--ketchup);padding-top:2px}
+  .daycard .dish{font-size:.95rem}
+
+  @media (prefers-reduced-motion: no-preference){
+    .swap{animation:slide .2s ease-out}
+    @keyframes slide{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  }
+  button:focus-visible{outline:3px solid var(--custard);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="sign">
+    <span class="plaque">SCHOOL DINNERS</span>
+    <p>Two hot options, one queue, no negotiation</p>
+  </div>
+
+  <div class="board">
+    <span class="stamp" id="stamp">TODAY</span>
+    <p class="dayname" id="dayname">Monday</p>
+    <p class="datetext" id="datetext">7 September 2026</p>
+    <div class="navrow">
+      <button class="arrow" id="prev" aria-label="Day before">&lsaquo;</button>
+      <span class="weekpill" id="weekpill">Week One of three</span>
+      <button class="arrow" id="next" aria-label="Day after">&rsaquo;</button>
+    </div>
+  </div>
+
+  <div id="content" aria-live="polite"></div>
+
+  <footer>
+    South West Norse spring/summer 2026 menu. Three weeks on repeat until Friday 23 October.<br>
+    Allergen list lives in the school kitchen, or email catering@swnorse.co.uk. Everything is subject to the kitchen's better judgement on the day.
+  </footer>
+</div>
+
+<div class="bar">
+  <button id="todayBtn">Back to today</button>
+  <button id="weekBtn" class="accent">The whole week</button>
+</div>
+
+<dialog id="weekDlg" aria-label="The whole week">
+  <div class="sheet">
+    <div class="sheetHead">
+      <h2 id="weekTitle">The whole week</h2>
+      <button class="close" id="closeWeek">Done</button>
+    </div>
+    <div id="weekBody"></div>
+  </div>
+</dialog>
+
+<script>
+(function(){
+  "use strict";
+
+  var DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+
+  // All three weeks, as printed on the SW Norse Spring/Summer 2026 menu.
+  var MENUS = {
+    1:{
+      Monday:{
+        hot1:{name:"Margherita pizza with potato wedges", tag:"v"},
+        hot2:{name:"Plant balls with steamed rice", tag:"ve"},
+        side:"Mixed salad", pud:"Pip Organic ice lolly"},
+      Tuesday:{
+        hot1:{name:"Mediterranean chicken with steamed rice"},
+        hot2:{name:"Macaroni cheese and crusty bread", tag:"v"},
+        side:"Peas and sweetcorn", pud:"Berry cupcake"},
+      Wednesday:{
+        hot1:{name:"Roast chicken with stuffing, roast potatoes and gravy"},
+        hot2:{name:"Cheese and potato pie", tag:"v"},
+        side:"Carrots and green beans", pud:"Chocolate brownie and orange wedges"},
+      Thursday:{
+        hot1:{name:"Bolognese and pasta twists"},
+        hot2:{name:"BBQ loaded bean bake with potato wedges", tag:"v"},
+        side:"Mixed vegetables", pud:"Fruit jelly"},
+      Friday:{
+        hot1:{name:"Chicken fillet bites and chips"},
+        hot2:{name:"Garden vegetable goujons and chips", tag:"v"},
+        side:"Peas or baked beans", pud:"Lemon shortbread with a melon wedge"}
+    },
+    2:{
+      Monday:{
+        hot1:{name:"Margherita pizza with pasta", tag:"v"},
+        hot2:{name:"Vegetable curry with steamed rice", tag:"ve"},
+        side:"Sweetcorn", pud:"Peaches and ice cream"},
+      Tuesday:{
+        hot1:{name:"Chicken curry with steamed rice"},
+        hot2:{name:"Cheese and tomato pasta bake", tag:"v"},
+        side:"Mixed vegetables", pud:"Marble shortbread"},
+      Wednesday:{
+        hot1:{name:"Sausages with Yorkshire pudding, roast potatoes and gravy"},
+        hot2:{name:"Plant sausages with Yorkshire pudding, roast potatoes and gravy", tag:"v"},
+        side:"Carrots and peas", pud:"Summer berry and apple slice with yogurt"},
+      Thursday:{
+        hot1:{name:"BBQ shredded chicken in a wrap with potato wedges"},
+        hot2:{name:"Vegetarian enchilada with potato wedges", tag:"v"},
+        side:"Mixed salad", pud:"Orange cupcake"},
+      Friday:{
+        hot1:{name:"Fish fingers or salmon fingers and chips"},
+        hot2:{name:"Cheese wheel and chips", tag:"v"},
+        side:"Peas or baked beans", pud:"Apple flapjack"}
+    },
+    3:{
+      Monday:{
+        hot1:{name:"Cheese and tomato pasta bake", tag:"v"},
+        hot2:{name:"Tex Mex chilli with steamed rice", tag:"ve"},
+        side:"Peas and sweetcorn", pud:"Pip Organic ice lolly"},
+      Tuesday:{
+        hot1:{name:"Hot dog with potato wedges and tomato dip"},
+        hot2:{name:"Plant sausage hot dog with potato wedges and tomato dip", tag:"v"},
+        side:"Mixed salad", pud:"Shortbread"},
+      Wednesday:{
+        hot1:{name:"Roast chicken with stuffing, roast potatoes and gravy"},
+        hot2:{name:"Vegetable plait with roast potatoes and gravy", tag:"v"},
+        side:"Broccoli and carrots", pud:"Chewy Krispie bar with orange wedges"},
+      Thursday:{
+        hot1:{name:"Chicken taco with steamed rice"},
+        hot2:{name:"Vegetarian taco with steamed rice", tag:"v"},
+        side:"Sweetcorn", pud:"Apple crumble and custard"},
+      Friday:{
+        hot1:{name:"Fish fingers and chips"},
+        hot2:{name:"Cheese and tomato frittata and chips", tag:"v"},
+        side:"Peas or baked beans", pud:"Oaty cookie"}
+    }
+  };
+
+  // The Mondays each week runs from, printed under each table.
+  var MONDAYS = {
+    1:["2026-04-20","2026-05-11","2026-06-08","2026-06-29","2026-07-20","2026-09-07","2026-09-28","2026-10-19"],
+    2:["2026-04-27","2026-05-18","2026-06-15","2026-07-06","2026-09-14","2026-10-05"],
+    3:["2026-05-04","2026-06-01","2026-06-22","2026-07-13","2026-09-21","2026-10-12"]
+  };
+
+
+  // Weeks with no school dinners at all.
+  var CLOSED = {
+    "2026-05-25":"May half term",
+    "2026-10-26":"October half term"
+  };
+
+  var MONTHS = ["January","February","March","April","May","June","July",
+                "August","September","October","November","December"];
+  var WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  var WEEK_WORDS = ["", "Week One", "Week Two", "Week Three"];
+  var DAY = 86400000;
+
+  function key(d){
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function addDays(d,n){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()+n); }
+  function mondayOf(d){
+    var dow = d.getDay();
+    return addDays(d, -(dow === 0 ? 6 : dow - 1));
+  }
+  function weekNumber(d){
+    var m = key(mondayOf(d));
+    for (var w=1; w<=3; w++){ if (MONDAYS[w].indexOf(m) > -1) return w; }
+    return 0;
+  }
+  function isWeekend(d){ return d.getDay() === 0 || d.getDay() === 6; }
+  function nextSchoolDay(d){ var x = d; while (isWeekend(x)) x = addDays(x,1); return x; }
+  function shortDate(d){ return d.getDate() + " " + MONTHS[d.getMonth()].slice(0,3); }
+
+  var today = startOfDay(new Date());
+  var current = nextSchoolDay(today);
+
+  function relativeLabel(d){
+    var diff = Math.round((d - today) / DAY);
+    if (diff === 0) return "TODAY";
+    if (diff === 1) return "TOMORROW";
+    if (diff === -1) return "YESTERDAY";
+    if (diff > 1 && diff < 7) return "IN " + diff + " DAYS";
+    if (diff < -1 && diff > -7) return (diff*-1) + " DAYS AGO";
+    return shortDate(d).toUpperCase();
+  }
+
+  function tagHtml(tag){
+    if (tag === "v")  return ' <span class="tag">veggie</span>';
+    if (tag === "ve") return ' <span class="tag ve">vegan</span>';
+    return "";
+  }
+
+  function well(cap, official, text){
+    return '<div class="well"><span class="cap">' + cap +
+           (official ? ' <small>&middot; ' + official + '</small>' : '') +
+           '</span><p class="dish">' + text + '</p></div>';
+  }
+
+  function trayHtml(m){
+    return '<div class="tray">' +
+      well("The main event", "hot option 1", m.hot1.name + tagHtml(m.hot1.tag)) +
+      well("The other one", "hot option 2", m.hot2.name + tagHtml(m.hot2.tag)) +
+      well("The bit that comes home uneaten", "served with", m.side) +
+      well("The actual reason they go", "pudding", m.pud) +
+    '</div>';
+  }
+
+  var ALWAYS_HTML =
+    '<div class="always"><h2>On every day, forever, world without end</h2><ul>' +
+      '<li>Jacket potato with cheese and/or beans</li>' +
+      '<li>Ham or cheese sandwich, with salad or veg and the pudding of the day</li>' +
+      '<li>Pasta with homemade tomato sauce, and/or cheese</li>' +
+      '<li>Fresh fruit and yoghurt</li>' +
+    '</ul></div>';
+
+  function noticeHtml(title, text){
+    return '<div class="notice"><h2>' + title + '</h2><p>' + text + '</p></div>';
+  }
+
+  var stamp = document.getElementById("stamp"),
+      weekpill = document.getElementById("weekpill"),
+      dayname = document.getElementById("dayname"),
+      datetext = document.getElementById("datetext"),
+      content = document.getElementById("content");
+
+  function render(){
+    var wd = WEEKDAYS[current.getDay()];
+    var wk = weekNumber(current);
+
+    dayname.textContent = wd;
+    datetext.textContent = current.getDate() + " " + MONTHS[current.getMonth()] + " " + current.getFullYear();
+    stamp.textContent = relativeLabel(current);
+    weekpill.textContent = wk ? WEEK_WORDS[wk] + " of three"
+                              : (CLOSED[key(mondayOf(current))] || "No dinners this week");
+
+    var html, closure = CLOSED[key(mondayOf(current))];
+
+    if (isWeekend(current)){
+      html = noticeHtml("Nothing being served",
+        "It's the weekend. Feeding them is your problem. Tap the arrow for the next school day.");
+    } else if (wk){
+      html = trayHtml(MENUS[wk][wd]) + ALWAYS_HTML;
+    } else if (closure){
+      html = noticeHtml(closure,
+        "Hatch shut all week. Feeding them is your problem until Monday.");
+    } else {
+      html = noticeHtml("Hatch closed",
+        "School holiday, or past the end of the spring/summer menu on 23 October. A new one turns up in the bottom of a book bag eventually.");
+    }
+    content.innerHTML = html;
+    content.classList.remove("swap");
+    void content.offsetWidth;
+    content.classList.add("swap");
+  }
+
+  function go(n){ current = addDays(current, n); render(); }
+
+  document.getElementById("prev").addEventListener("click", function(){ go(-1); });
+  document.getElementById("next").addEventListener("click", function(){ go(1); });
+  document.getElementById("todayBtn").addEventListener("click", function(){
+    current = nextSchoolDay(today); render();
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "ArrowLeft") go(-1);
+    if (e.key === "ArrowRight") go(1);
+  });
+
+  var x0 = null, y0 = null;
+  document.addEventListener("touchstart", function(e){
+    x0 = e.changedTouches[0].clientX; y0 = e.changedTouches[0].clientY;
+  }, {passive:true});
+  document.addEventListener("touchend", function(e){
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? 1 : -1);
+    x0 = null;
+  }, {passive:true});
+
+  var dlg = document.getElementById("weekDlg");
+  document.getElementById("weekBtn").addEventListener("click", function(){
+    var monday = mondayOf(current), wk = weekNumber(current), body = "";
+    var closed = CLOSED[key(monday)];
+    document.getElementById("weekTitle").textContent =
+      (wk ? WEEK_WORDS[wk] : (closed || "No dinners")) + ", " + shortDate(monday) + " to " + shortDate(addDays(monday,4));
+
+    for (var i=0;i<5;i++){
+      var d = addDays(monday, i), isToday = d.getTime() === today.getTime();
+      body += '<div class="daycard' + (isToday ? ' is-today' : '') + '">' +
+              '<header>' + DAYS[i] + '<span>' + (isToday ? "today" : shortDate(d)) + '</span></header>';
+      if (wk){
+        var m = MENUS[wk][DAYS[i]];
+        body += '<div class="line"><div class="k">Hot 1</div><p class="dish">' + m.hot1.name + tagHtml(m.hot1.tag) + '</p></div>' +
+                '<div class="line"><div class="k">Hot 2</div><p class="dish">' + m.hot2.name + tagHtml(m.hot2.tag) + '</p></div>' +
+                '<div class="line"><div class="k">With</div><p class="dish">' + m.side + '</p></div>' +
+                '<div class="line"><div class="k">Pudding</div><p class="dish">' + m.pud + '</p></div>';
+      } else {
+        body += '<div class="line"><p class="dish">' + (closed ? "Hatch shut &mdash; " + closed.toLowerCase() + "." : "Hatch closed. Holiday, or past the end of this menu.") + '</p></div>';
+      }
+      body += '</div>';
+    }
+    document.getElementById("weekBody").innerHTML = body;
+    if (typeof dlg.showModal === "function") dlg.showModal(); else dlg.setAttribute("open","");
+  });
+  document.getElementById("closeWeek").addEventListener("click", function(){
+    if (typeof dlg.close === "function") dlg.close(); else dlg.removeAttribute("open");
+  });
+
+  render();
+
+  if ("serviceWorker" in navigator){
+    window.addEventListener("load", function(){
+      navigator.serviceWorker.register("sw.js").catch(function(){});
+    });
+  }
+})();
+</script>
+</body>
+</html>
