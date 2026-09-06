@@ -1,8 +1,8 @@
-const CACHE = "lunch-v6";
+const CACHE = "lunch-v7";
 const ASSETS = [
   "./",
   "./index.html",
-  "./manifest.webmanifest",
+  "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",
   "./maskable-512.png",
@@ -10,7 +10,12 @@ const ASSETS = [
 ];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+  // Cache what we can. One missing file must not stop the worker installing.
+  e.waitUntil(
+    caches.open(CACHE)
+      .then((c) => Promise.all(ASSETS.map((a) => c.add(a).catch(() => null))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener("activate", (e) => {

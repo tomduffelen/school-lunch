@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>School Dinners</title>
 <meta name="description" content="What's being served in the hall today.">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="manifest.json" type="application/manifest+json">
 <meta name="theme-color" content="#1F5D45">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dinners">
@@ -121,6 +122,9 @@
   .notice h2{margin:0 0 6px;font-size:1.05rem;font-weight:900}
   .notice p{margin:0;font-size:.92rem;color:var(--ink-soft);font-weight:600;line-height:1.45}
 
+  #check{margin:0 0 18px;color:#A9CDBA;font-size:.78rem;font-weight:600}
+  #check summary{cursor:pointer;padding:8px 2px;color:#8FBBA6}
+  #checkOut{background:rgba(0,0,0,.22);border-radius:6px;padding:12px 14px;line-height:1.6;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.72rem;color:#DCEFE4;word-break:break-word}
   footer{color:#A9CDBA;font-size:.74rem;font-weight:600;text-align:center;line-height:1.55;padding:2px 4px 12px}
 
   /* ---- bar ---- */
@@ -186,6 +190,11 @@
     South West Norse spring/summer 2026 menu. Three weeks on repeat until Friday 23 October.<br>
     Allergen list lives in the school kitchen, or email catering@swnorse.co.uk. Everything is subject to the kitchen's better judgement on the day.
   </footer>
+
+  <details id="check">
+    <summary>Why won't it install?</summary>
+    <div id="checkOut">Checking&hellip;</div>
+  </details>
 </div>
 
 <div class="bar">
@@ -452,6 +461,36 @@
   });
 
   render();
+
+  document.getElementById("check").addEventListener("toggle", function(){
+    if (!this.open) return;
+    var out = document.getElementById("checkOut"), lines = [];
+    function draw(){ out.innerHTML = lines.join("<br>"); }
+    function add(label, ok, note){
+      lines.push((ok ? "PASS " : "FAIL ") + label + (note ? " &mdash; " + note : "")); draw();
+    }
+    lines = ["Page: " + location.href]; draw();
+    add("secure connection", window.isSecureContext);
+
+    fetch("manifest.json", {cache:"no-store"}).then(function(r){
+      add("manifest found", r.ok, "HTTP " + r.status + ", type " + (r.headers.get("content-type") || "none"));
+      return r.json();
+    }).then(function(mf){
+      add("manifest parses", true, "name: " + mf.name);
+      return Promise.all(mf.icons.map(function(ic){
+        return fetch(ic.src, {cache:"no-store"}).then(function(r){
+          add("icon " + ic.src, r.ok, "HTTP " + r.status);
+        }).catch(function(){ add("icon " + ic.src, false, "could not be fetched"); });
+      }));
+    }).catch(function(e){
+      add("manifest usable", false, String(e));
+    }).then(function(){
+      if (!("serviceWorker" in navigator)) return add("service worker support", false);
+      return navigator.serviceWorker.getRegistration().then(function(reg){
+        add("service worker registered", !!reg, reg && reg.active ? "active" : "not active yet, reload once");
+      });
+    });
+  });
 
   if ("serviceWorker" in navigator){
     window.addEventListener("load", function(){
