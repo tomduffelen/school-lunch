@@ -56,6 +56,15 @@
   }
   .sign p{margin:8px 0 0;color:#BFE0CF;font-size:.76rem;font-weight:600;letter-spacing:.02em}
 
+  #install{
+    display:block;width:100%;margin:0 0 14px;cursor:pointer;
+    font-family:inherit;font-weight:800;font-size:.88rem;
+    background:var(--custard);color:#4A3403;border:0;border-radius:5px;
+    padding:13px 14px;border-bottom:4px solid #C99C1F;
+  }
+  #install:active{transform:translateY(2px);border-bottom-width:2px}
+  #install[hidden]{display:none}
+
   /* ---- the day, on the dinner ladies' whiteboard ---- */
   .board{
     background:var(--paper);border-radius:4px;padding:18px 18px 16px;position:relative;
@@ -169,6 +178,8 @@
     <span class="plaque">SCHOOL DINNERS</span>
     <p>Two hot options, one queue, no negotiation</p>
   </div>
+
+  <button id="install" hidden>Stick it on your home screen</button>
 
   <div class="board">
     <span class="stamp" id="stamp">TODAY</span>
@@ -460,6 +471,33 @@
   });
 
   render();
+
+  // Install button: only appears when the browser says it can install, and goes for good once it has.
+  (function(){
+    var btn = document.getElementById("install"), prompt = null;
+    var installed = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+
+    window.addEventListener("beforeinstallprompt", function(e){
+      if (installed) return;
+      e.preventDefault();
+      prompt = e;
+      btn.hidden = false;
+    });
+
+    btn.addEventListener("click", function(){
+      if (!prompt) return;
+      btn.hidden = true;
+      prompt.prompt();
+      prompt.userChoice.then(function(choice){
+        if (choice.outcome !== "accepted") btn.hidden = false; // said no, leave the option there
+        prompt = null;
+      });
+    });
+
+    window.addEventListener("appinstalled", function(){
+      installed = true; prompt = null; btn.hidden = true;
+    });
+  })();
 
   if ("serviceWorker" in navigator){
     window.addEventListener("load", function(){
