@@ -196,7 +196,7 @@
 
   <footer>
     This is a parent-made app and is not affiliated with the school....... so don't moan at them about it.<br>
-    Allergen list lives in the school kitchen, or email catering@swnorse.co.uk. Everything is subject to the kitchen's better judgement on the day.
+    Norse autumn/winter 2026/27 menu, on repeat until Friday 26 March. Allergen list is at norsecatering.co.uk, and everything is subject to the kitchen's better judgement on the day.
   </footer>
 
 </div>
@@ -222,88 +222,103 @@
 
   var DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
 
-  // All three weeks, as printed on the SW Norse Spring/Summer 2026 menu.
+  // All three weeks, as printed on the Norse Autumn/Winter 2026/27 menu.
   var MENUS = {
     1:{
       Monday:{
-        hot1:{name:"Margherita pizza with potato wedges", tag:"v"},
-        hot2:{name:"Plant balls with steamed rice", tag:"ve"},
-        side:"Mixed salad", pud:"Pip Organic ice lolly"},
+        hot1:{name:"Cheese and tomato pasta bake", tag:"v"},
+        hot2:{name:"Tex Mex chilli with steamed rice", tag:"v"},
+        side:"Peas and sweetcorn", pud:"Ice cream",
+        packed:"Ham, tuna or cheese sandwich, sultanas, fruit portion, ice cream"},
       Tuesday:{
-        hot1:{name:"Mediterranean chicken with steamed rice"},
-        hot2:{name:"Macaroni cheese and crusty bread", tag:"v"},
-        side:"Peas and sweetcorn", pud:"Berry cupcake"},
+        hot1:{name:"BBQ pork meatball sub with potato wedges"},
+        hot2:{name:"BBQ plant ball sub with potato wedges", tag:"v"},
+        side:"Mixed salad", pud:"Beetroot brownie",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, fruit portion, beetroot brownie"},
       Wednesday:{
-        hot1:{name:"Roast chicken with stuffing, roast potatoes and gravy"},
-        hot2:{name:"Cheese and potato pie", tag:"v"},
-        side:"Carrots and green beans", pud:"Chocolate brownie and orange wedges"},
+        hot1:{name:"Chicken pie with roast potatoes and gravy"},
+        hot2:{name:"Cheese and potato pie with gravy", tag:"v"},
+        side:"Carrots and green beans", pud:"Fresh fruit selection",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, sultanas, fruit portion"},
       Thursday:{
-        hot1:{name:"Bolognese and pasta twists"},
-        hot2:{name:"BBQ loaded bean bake with potato wedges", tag:"v"},
-        side:"Mixed vegetables", pud:"Fruit jelly"},
+        hot1:{name:"Chicken curry with steamed rice"},
+        hot2:{name:"Vegemince bolognese with pasta twists", tag:"v"},
+        side:"Broccoli and carrots", pud:"Apple sponge with custard",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, fruit portion, apple sponge"},
       Friday:{
-        hot1:{name:"Chicken fillet bites and chips"},
+        hot1:{name:"Breaded fish fingers or salmon fingers and chips"},
         hot2:{name:"Garden vegetable goujons and chips", tag:"v"},
-        side:"Peas or baked beans", pud:"Lemon shortbread with a melon wedge"}
+        side:"Peas or baked beans", pud:"Ginger crunch with orange wedges",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, ginger crunch, orange wedges"}
     },
     2:{
       Monday:{
-        hot1:{name:"Margherita pizza with pasta", tag:"v"},
-        hot2:{name:"Vegetable curry with steamed rice", tag:"ve"},
-        side:"Sweetcorn", pud:"Peaches and ice cream"},
+        hot1:{name:"Margherita pizza with potato wedges", tag:"v"},
+        hot2:{name:"Winter vegetable pasta bake", tag:"v"},
+        side:"Peas", pud:"Fresh fruit selection",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, sultanas, fresh fruit selection"},
       Tuesday:{
-        hot1:{name:"Chicken curry with steamed rice"},
-        hot2:{name:"Cheese and tomato pasta bake", tag:"v"},
-        side:"Mixed vegetables", pud:"Marble shortbread"},
+        hot1:{name:"\u201cBuild your own\u201d chicken taco with steamed rice"},
+        hot2:{name:"\u201cBuild your own\u201d vegetarian taco with steamed rice", tag:"v"},
+        side:"Sweetcorn", pud:"Banana cupcake",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, banana cupcake"},
       Wednesday:{
-        hot1:{name:"Sausages with Yorkshire pudding, roast potatoes and gravy"},
-        hot2:{name:"Plant sausages with Yorkshire pudding, roast potatoes and gravy", tag:"v"},
-        side:"Carrots and peas", pud:"Summer berry and apple slice with yogurt"},
+        hot1:{name:"Roast chicken with stuffing, roast potato and gravy"},
+        hot2:{name:"Vegetarian cottage pie with gravy", tag:"v"},
+        side:"Carrots and broccoli", pud:"Flapjack with apple wedges",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, apple wedges, flapjack"},
       Thursday:{
-        hot1:{name:"BBQ shredded chicken in a wrap with potato wedges"},
-        hot2:{name:"Vegetarian enchilada with potato wedges", tag:"v"},
-        side:"Mixed salad", pud:"Orange cupcake"},
+        hot1:{name:"Pork bolognese with pasta"},
+        hot2:{name:"Cheese and potato pastry pinwheel with potato wedges", tag:"v"},
+        side:"Mixed vegetables", pud:"Cocoa sponge and cocoa sauce",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, sultanas, cocoa sponge"},
       Friday:{
-        hot1:{name:"Fish fingers or salmon fingers and chips"},
-        hot2:{name:"Cheese wheel and chips", tag:"v"},
-        side:"Peas or baked beans", pud:"Apple flapjack"}
+        hot1:{name:"Chicken fillet bites and chips"},
+        hot2:{name:"Vegetarian enchilada and chips", tag:"v"},
+        side:"Peas or baked beans", pud:"Cinnamon bun",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, fruit portion, cinnamon bun"}
     },
     3:{
       Monday:{
-        hot1:{name:"Cheese and tomato pasta bake", tag:"v"},
-        hot2:{name:"Tex Mex chilli with steamed rice", tag:"ve"},
-        side:"Peas and sweetcorn", pud:"Pip Organic ice lolly"},
+        hot1:{name:"Margherita pizza with tomato pasta", tag:"v"},
+        hot2:{name:"Loaded tomato and bean bake", tag:"v"},
+        side:"Salad sticks", pud:"Fresh fruit selection",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, sultanas, fresh fruit selection"},
       Tuesday:{
-        hot1:{name:"Hot dog with potato wedges and tomato dip"},
-        hot2:{name:"Plant sausage hot dog with potato wedges and tomato dip", tag:"v"},
-        side:"Mixed salad", pud:"Shortbread"},
+        hot1:{name:"Chicken fajita wrap with potato wedges"},
+        hot2:{name:"Cheesy pasta", tag:"v"},
+        side:"Peas and sweetcorn", pud:"Fruit jelly",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, fruit jelly"},
       Wednesday:{
-        hot1:{name:"Roast chicken with stuffing, roast potatoes and gravy"},
-        hot2:{name:"Vegetable plait with roast potatoes and gravy", tag:"v"},
-        side:"Broccoli and carrots", pud:"Chewy Krispie bar with orange wedges"},
+        hot1:{name:"Chipolata sausages with Yorkshire pudding, roast potato and gravy"},
+        hot2:{name:"Plant sausages with Yorkshire pudding, roast potato and gravy", tag:"v"},
+        side:"Mixed vegetables", pud:"Oaty cookie",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, fruit portion, oaty cookie"},
       Thursday:{
-        hot1:{name:"Chicken taco with steamed rice"},
-        hot2:{name:"Vegetarian taco with steamed rice", tag:"v"},
-        side:"Sweetcorn", pud:"Apple crumble and custard"},
+        hot1:{name:"Creamy chicken and tomato pasta bake"},
+        hot2:{name:"Vegetable curry and steamed rice", tag:"v"},
+        side:"Broccoli", pud:"Toffee cream shortcake",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, fruit portion, toffee cream shortcake"},
       Friday:{
-        hot1:{name:"Fish fingers and chips"},
-        hot2:{name:"Cheese and tomato frittata and chips", tag:"v"},
-        side:"Peas or baked beans", pud:"Oaty cookie"}
+        hot1:{name:"Breaded fish fingers and chips"},
+        hot2:{name:"Cheese and tomato quiche with chips", tag:"v"},
+        side:"Peas or baked beans", pud:"Pip Organic fruit ice lolly",
+        packed:"Ham, tuna or cheese sandwich, salad sticks, sultanas, Pip Organic lolly"}
     }
   };
 
   // The Mondays each week runs from, printed under each table.
   var MONDAYS = {
-    1:["2026-04-20","2026-05-11","2026-06-08","2026-06-29","2026-07-20","2026-09-07","2026-09-28","2026-10-19"],
-    2:["2026-04-27","2026-05-18","2026-06-15","2026-07-06","2026-09-14","2026-10-05"],
-    3:["2026-05-04","2026-06-01","2026-06-22","2026-07-13","2026-09-21","2026-10-12"]
+    1:["2026-11-02","2026-11-23","2026-12-14","2027-01-18","2027-02-08","2027-03-08"],
+    2:["2026-11-09","2026-11-30","2027-01-04","2027-01-25","2027-02-22","2027-03-15"],
+    3:["2026-11-16","2026-12-07","2027-01-11","2027-02-01","2027-03-01","2027-03-22"]
   };
-
 
   // Weeks with no school dinners at all.
   var CLOSED = {
-    "2026-05-25":"May half term",
-    "2026-10-26":"October half term"
+    "2026-12-21":"Christmas holidays",
+    "2026-12-28":"Christmas holidays",
+    "2027-02-15":"February half term"
   };
 
   var MONTHS = ["January","February","March","April","May","June","July",
@@ -330,7 +345,7 @@
   function nextSchoolDay(d){ var x = d; while (isWeekend(x)) x = addDays(x,1); return x; }
   function shortDate(d){ return d.getDate() + " " + MONTHS[d.getMonth()].slice(0,3); }
 
-  var MENU_ENDS = new Date(2026, 9, 23); // Friday 23 October, the last day of this menu
+  var MENU_ENDS = new Date(2027, 2, 26); // Friday 26 March 2027, the last day of this menu
   var today = startOfDay(new Date());
   var current = nextSchoolDay(today);
 
@@ -362,15 +377,14 @@
       well("The other one", "hot option 2", m.hot2.name + tagHtml(m.hot2.tag)) +
       well("The bit that goes in the bin", "served with", m.side) +
       well("The actual reason they go", "pudding", m.pud) +
+      well("If they'd rather not queue", "packed lunch", m.packed) +
     '</div>';
   }
 
   var ALWAYS_HTML =
     '<div class="always"><h2>On every day, forever, world without end</h2><ul>' +
-      '<li>Jacket potato with cheese and/or beans</li>' +
-      '<li>Ham or cheese sandwich, with salad or veg and the pudding of the day</li>' +
-      '<li>Pasta with homemade tomato sauce, and/or cheese</li>' +
-      '<li>Fresh fruit and yoghurt</li>' +
+      '<li>Jacket potato with cheese, beans or tuna</li>' +
+      '<li>Fresh fruit</li>' +
     '</ul></div>';
 
   function noticeHtml(title, text){
@@ -405,12 +419,12 @@
       html = noticeHtml(closure,
         "Hatch shut all week. Feeding them is your problem until Monday.");
     } else if (current > MENU_ENDS){
-      html = noticeHtml("Waiting on the winter menu",
-        "Spring/summer finished on 23 October. The new one is still crumpled in the bottom of a book bag somewhere. " +
-        "Brace for gravy, brace for sprouts. The fussy sods will be fine, because this lot never changes:") + ALWAYS_HTML;
+      html = noticeHtml("Waiting on the spring menu",
+        "Autumn/winter finished on 26 March. The new one is still crumpled in the bottom of a book bag somewhere. " +
+        "Brace for salad. The fussy sods will be fine, because this lot never changes:") + ALWAYS_HTML;
     } else {
       html = noticeHtml("Hatch closed",
-        "School holiday, or before this menu started on 20 April.");
+        "School holiday, or before this menu started on 2 November.");
     }
     content.innerHTML = html;
     content.classList.remove("swap");
